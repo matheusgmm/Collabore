@@ -13,6 +13,7 @@ import { StorageService } from 'src/app/shared/services/storage.service';
 export class AuthPage {
 
   protected password_type: string = 'password';
+  protected password_icon: 'eye' | 'eye-off-outline' =  'eye';
 
   constructor(
     private router: Router,
@@ -24,6 +25,7 @@ export class AuthPage {
 
   protected togglePasswordMode() {
     this.password_type = this.password_type === 'text' ? 'password' : 'text';
+    this.password_icon = this.password_icon === 'eye' ? 'eye-off-outline' : 'eye';
   }
 
   protected async onLogin(form: NgForm) {

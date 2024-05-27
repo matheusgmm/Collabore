@@ -74,6 +74,10 @@
     --ion-color-light-tint: #f5f6f9;
   
     --ion-font-family: "Urbanist", "sans-serif";
+
+    ion-back-button::part(text) {
+        display: none;
+      }
 }
 html {
     /* 
