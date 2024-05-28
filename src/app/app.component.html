@@ -1,3 +1,51 @@
 <ion-app>
-  <ion-router-outlet></ion-router-outlet>
+  <ion-menu side="start" contentId="main" menuId="m1">
+    <ion-header>
+      <ion-toolbar>
+        <ion-buttons slot="end">
+          <ion-menu-toggle>
+            <ion-button>
+              <ion-icon name="close"></ion-icon>
+            </ion-button>
+          </ion-menu-toggle>
+        </ion-buttons>
+        <ion-title color="primary">Collabore</ion-title>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content>
+      <ion-list>
+
+        <ion-menu-toggle menu="m1">
+          <ion-item lines="none" routerLink="/collabore/tabs/posts" button>
+            <ion-icon name="home-outline" slot="start"></ion-icon>
+            <ion-label>Home</ion-label>
+          </ion-item>
+        </ion-menu-toggle>
+
+        <ion-menu-toggle menu="m1">
+          <ion-item lines="none" routerLink="/collabore/tabs/new-post" button>
+            <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+            <ion-label>Nova postagem</ion-label>
+          </ion-item>
+        </ion-menu-toggle>
+
+        <ion-menu-toggle menu="m1">
+          <ion-item lines="full" routerLink="/collabore/tabs/profile" button>
+            <ion-icon name="person-outline" slot="start"></ion-icon>
+            <ion-label>Perfil</ion-label>
+          </ion-item>
+        </ion-menu-toggle>
+
+        <ion-menu-toggle menu="m1" class="ion-margin-top">
+          <ion-item lines="none" (click)="onLogout()" button>
+            <ion-icon name="exit" slot="start"></ion-icon>
+            <ion-label>Logout</ion-label>
+          </ion-item>
+        </ion-menu-toggle>
+
+      </ion-list>
+    </ion-content>
+  </ion-menu>
+  <ion-router-outlet id="main"></ion-router-outlet>
 </ion-app>
