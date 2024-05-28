@@ -24,16 +24,25 @@
         <ion-col size-md="6" offset-md="3">
             <ion-card>
               <ion-card-header>
-                <ion-item lines="none">
-                  <ion-avatar slot="start" *ngIf="post.pfp">
-                    <ion-img [src]="post.link_pfp"></ion-img>
-                  </ion-avatar>
-
+                <ion-card-subtitle class="ion-margin-top">
                   <ion-label>
-                    <h3> {{ post.name }} </h3>
-                    <p> {{ post.city }} </p>
+                    <h3 class="title"> {{ post.title | titlecase }} </h3>
+                    <br>
+                    <p class="sub-title"> {{ post.text }} </p>
                   </ion-label>
-                </ion-item>
+                </ion-card-subtitle>
+                <ion-card-title>
+                  <ion-item lines="none">
+                    <ion-avatar slot="start" *ngIf="post.pfp">
+                      <ion-img [src]="post.link_pfp"></ion-img>
+                    </ion-avatar>
+  
+                    <ion-label>
+                      <h3> {{ post.name }} </h3>
+                      <p> {{ post.city }} </p>
+                    </ion-label>
+                  </ion-item>
+                </ion-card-title>
               </ion-card-header>
 
               <ion-img [src]="post.image"></ion-img>
