@@ -5,3 +5,12 @@ ion-header {
 ion-content {
     --overflow: hidden
 }
+
+.ion-text-center {
+    padding-right: 1rem !important;
+}
+
+.note {
+    font-weight: 500;
+    font-size: 1rem;
+}

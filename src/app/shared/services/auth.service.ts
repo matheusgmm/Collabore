@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
-import { ChangePassword, Identify, Login, LoginResponse } from '../models/auth.model';
+import { ChangePassword, CreateAccount, Identify, Login, LoginResponse } from '../models/auth.model';
 
 @Injectable({
   providedIn: 'root'
@@ -37,5 +37,9 @@ export class AuthService {
 
   changePassword(id: number, values: ChangePassword): Observable<ChangePassword> {
     return this.http.patch<ChangePassword>(`${this.API}/user/password/${id}`, values)
+  }
+
+  createAccount(values: CreateAccount): Observable<CreateAccount> {
+    return this.http.post<CreateAccount>(`${this.API}/user/register`, values);
   }
 }

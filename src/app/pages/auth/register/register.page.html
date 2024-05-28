@@ -25,6 +25,7 @@
           <ion-item >
             <ion-input type="text" label="Nome" labelPlacement="floating" placeholder="Nome de usuário" formControlName="name"></ion-input>
             <ion-note class="ion-text-center" slot="end" color="danger" *ngIf="formGroup.get('name')?.dirty && formGroup.get('name')?.hasError('required')">Obrigatório</ion-note>
+            <ion-icon name="person-outline" slot="end"></ion-icon>
           </ion-item>
         </ion-col>
       </ion-row>
@@ -35,6 +36,7 @@
             <ion-input type="email" label="E-mail" labelPlacement="floating" placeholder="Adicionar e-mail" formControlName="email"></ion-input>
             <ion-note class="ion-text-center" slot="end" color="danger" *ngIf="formGroup.get('email')?.dirty && formGroup.get('email')?.hasError('required')">Obrigatório</ion-note>
             <ion-note class="ion-text-center" slot="end" color="danger" *ngIf="formGroup.get('email')?.dirty && formGroup.get('email')?.hasError('email')">E-mail inválido</ion-note>
+            <ion-icon name="mail-outline" slot="end"></ion-icon>
           </ion-item>      
         </ion-col>
       </ion-row>
@@ -44,6 +46,7 @@
           <ion-item>
             <ion-input type="password" label="Senha" labelPlacement="floating" placeholder="Criar senha" formControlName="password"></ion-input>
             <ion-note class="ion-text-center" slot="end" color="danger" *ngIf="formGroup.get('password')?.dirty && formGroup.get('password')?.hasError('required')">Obrigatório</ion-note>
+            <ion-icon [name]="password_icon" slot="end" (click)="togglePasswordMode()"></ion-icon>
           </ion-item>
         </ion-col>
       </ion-row>
@@ -54,6 +57,7 @@
             <ion-input type="password" label="Confirmar Senha" labelPlacement="floating" placeholder="Confirme sua senha" formControlName="confirmPassword"></ion-input>
             <ion-note class="ion-text-center" slot="end" color="danger" *ngIf="formGroup.get('confirmPassword')?.dirty && formGroup.get('confirmPassword')?.hasError('required')">Obrigatório</ion-note>
             <ion-note class="ion-text-center" slot="end" color="danger" *ngIf="formGroup.get('confirmPassword')?.dirty && formGroup.get('confirmPassword')?.value !== formGroup.get('password')?.value && formGroup.get('password')?.value && formGroup.get('confirmPassword')?.value">As senhas devem ser iguais</ion-note>
+            <ion-icon [name]="password_icon" slot="end" (click)="togglePasswordMode()"></ion-icon>
           </ion-item>
         </ion-col>
       </ion-row>
@@ -61,20 +65,19 @@
       <ion-row class="ion-padding">
         <ion-col size-md="8" offset-md="2">
           <ion-item lines="none" class="ion-no-padding ion-no-margin">
-            <ion-checkbox slot="start" formControlName="terms" labelPlacement="end">Eu li e aceito os termos e condições</ion-checkbox>
-            <ion-note class="ion-text-center" slot="start" color="danger" *ngIf="formGroup.get('terms')?.dirty && !formGroup.get('terms')?.value">Obrigatório</ion-note>
+            <ion-checkbox slot="start" labelPlacement="end" (click)="acceptTerms()">Eu li e aceito os termos e condições</ion-checkbox>
           </ion-item>
-          <ion-button [disabled]="!formGroup.valid" (click)="onRegister()" type="submit" expand="block">Registre-se</ion-button>
+          <ion-button [disabled]="formGroup.invalid || !accepted_terms || formGroup.get('password')?.value != formGroup.get('confirmPassword')?.value " (click)="onRegister()" type="submit" expand="block">Registre-se</ion-button>
         </ion-col>
       </ion-row>
     </ion-grid>
   </form>
 
   <ion-grid>
-    <ion-row class="ion-text-center ion-margin-top" >
-      <ion-col class="ion-text-center">
-        <ion-note color="primary">Já tem uma conta?&nbsp;</ion-note>
-        <ion-note color="secondary" routerLink="/auth"> Login</ion-note>
+    <ion-row class="ion-text-center ion-margin-top ion-padding-top" >
+      <ion-col class="ion-text-center ion-padding ion-margin-top">
+        <ion-note class="note" color="primary">Já tem uma conta?&nbsp;</ion-note>
+        <ion-note class="note" color="secondary" routerLink="/auth"> Login</ion-note>
       </ion-col>
     </ion-row>
   </ion-grid>
