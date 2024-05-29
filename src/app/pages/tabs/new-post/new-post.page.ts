@@ -106,12 +106,18 @@ export class NewPostPage implements OnInit, AfterViewInit {
       } else {
         movingState.lastLat = mLat;
         movingState.lastLng = mLng;
+        this.latLng.lat = mLat;
+        this.latLng.lng = mLng;
         this.marker.closeTooltip();
       }
     });
 
     this.circle.on('click', ({ latlng }) => {
       this.marker.setLatLng(latlng);
+      movingState.lastLat = latlng.lat;
+      movingState.lastLng = latlng.lng;
+      this.latLng.lat = latlng.lat;
+      this.latLng.lng = latlng.lng;
     });
   }
 
@@ -129,4 +135,9 @@ export class NewPostPage implements OnInit, AfterViewInit {
 
     this.imageUrl = "data:image/jpeg;base64,"+image.base64String;
   };
+
+
+  getCoords() {
+    console.log("coords: ", this.latLng);
+  }
 }
