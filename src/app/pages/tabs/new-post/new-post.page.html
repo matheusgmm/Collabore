@@ -1,13 +1,79 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>new-post</ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button menu="m1"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Nova Postagem</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">new-post</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class="ion-padding">
+
+  <ion-grid>
+    <ion-row class="ion-margin-top ion-no-padding">
+      <ion-col size-md="6" offset-md="3" class="image-box ion-no-padding" (click)="takePicture()">
+          <ion-img [ngClass]="{'ion-padding' : !imageUrl}" class="image ion-no-padding" [src]="imageUrl ? imageUrl : '../../../../assets/camera.png'"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col>
+        <ion-button color="primary" expand="block" (click)="takePicture()">
+          <ion-icon name="camera" slot="start"></ion-icon>
+          <ion-label>Selecionar foto</ion-label>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="ion-margin-top">
+      <ion-col size-md="6" offset-md="3">
+        <ion-card class="ion-no-padding ion-no-margin">
+          <ion-card-header >
+            <ion-card-subtitle >
+              <ion-label>
+                <h3 class="title"> {{ "Selecione a categoria da publicação" }} </h3>
+              </ion-label>
+            </ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-segment class="escolhas" [(ngModel)]="selectedSegment" value="elogio">
+              <ion-segment-button class="elogio" value="elogio">
+                <ion-label>Elogio</ion-label>
+                <ion-icon name="trophy-outline"></ion-icon>
+              </ion-segment-button>
+              <ion-segment-button class="alerta" value="alerta">
+                <ion-label>Alerta</ion-label>
+                <ion-icon name="warning-outline"></ion-icon>
+              </ion-segment-button>
+              <ion-segment-button class="critica" value="critica">
+                <ion-label>Crítica</ion-label>
+                <ion-icon name="alert-circle-outline"></ion-icon>
+              </ion-segment-button>
+            </ion-segment>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="ion-margin-top">
+      <ion-col size-md="6" offset-md="3">
+        <div id="map"></div>
+      </ion-col>
+    </ion-row>
+    
+    <ion-row>
+      <ion-col size-md="6" offset-md="3">
+        <ion-button color="primary" expand="block">
+          <ion-icon name="location-outline" slot="start"></ion-icon>
+          <ion-label>Confirmar Localização</ion-label>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+
+  </ion-grid>
+
 </ion-content>
+
+<ng-template #hasImage>
+  
+</ng-template>

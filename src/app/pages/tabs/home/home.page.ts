@@ -23,6 +23,7 @@ export class HomePage implements OnInit {
   ) { }
 
   async ngOnInit() {
+    this.isLoading = true;
     await this.getPostList();
   }
 

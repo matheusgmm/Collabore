@@ -1,0 +1,26 @@
+.title, .sub-title {
+    text-transform: none;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.image-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid var(--ion-color-primary);
+}
+
+.image {
+    object-fit: contain;
+    background-position: center;
+    background-size: cover;
+    border-radius: 4px;
+}
+
+#map {
+    height: 400px;
+    border: 1px solid var(--ion-color-primary);
+    padding: 0;
+    width: 100%;
+  }

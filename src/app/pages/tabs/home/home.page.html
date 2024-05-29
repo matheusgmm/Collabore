@@ -31,8 +31,8 @@
                     <p class="sub-title"> {{ post.text }} </p>
                   </ion-label>
                 </ion-card-subtitle>
-                <ion-card-title>
-                  <ion-item lines="full">
+                <ion-card-title class="ion-no-padding">
+                  <ion-item lines="full" class="ion-no-padding">
                     <ion-avatar slot="start" *ngIf="post.pfp">
                       <ion-img [src]="post.link_pfp"></ion-img>
                     </ion-avatar>
@@ -40,6 +40,9 @@
                     <ion-label>
                       <h3> {{ post.name }} </h3>
                       <p> {{ post.city }} </p>
+                    </ion-label>
+                    <ion-label>
+                      <p> {{ post.created_at | date: 'dd/MM/yyyy' }} </p>
                     </ion-label>
                   </ion-item>
                 </ion-card-title>
