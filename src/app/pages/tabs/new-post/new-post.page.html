@@ -11,14 +11,15 @@
 
   <ion-grid>
     <ion-row class="ion-margin-top ion-no-padding">
-      <ion-col size-md="6" offset-md="3" class="image-box ion-no-padding" (click)="takePicture()">
+      <ion-col size-md="6" offset-md="3" class="image-box ion-no-padding">
           <ion-img [ngClass]="{'ion-padding' : !imageUrl}" class="image ion-no-padding" [src]="imageUrl ? imageUrl : '../../../../assets/camera.png'"></ion-img>
+          <ion-icon button name="close-circle-outline" class="close-icon" size="large" (click)="removeImage()"></ion-icon>
       </ion-col>
     </ion-row>
 
     <ion-row>
-      <ion-col>
-        <ion-button color="primary" expand="block" (click)="takePicture()">
+      <ion-col size-md="6" offset-md="3">
+        <ion-button color="primary" expand="block" (click)="addPhotoToGallery()">
           <ion-icon name="camera" slot="start"></ion-icon>
           <ion-label>Selecionar foto</ion-label>
         </ion-button>
@@ -36,20 +37,25 @@
             </ion-card-subtitle>
           </ion-card-header>
           <ion-card-content>
-            <ion-segment class="escolhas" [(ngModel)]="selectedSegment" value="elogio">
-              <ion-segment-button class="elogio" value="elogio">
+            <ion-segment value="elogio" (ionChange)="onSelectCategory($event)">
+
+              <ion-segment-button value="elogio" class="elogio" checked>
                 <ion-label>Elogio</ion-label>
                 <ion-icon name="trophy-outline"></ion-icon>
               </ion-segment-button>
-              <ion-segment-button class="alerta" value="alerta">
+
+              <ion-segment-button value="alerta" class="alerta">
                 <ion-label>Alerta</ion-label>
                 <ion-icon name="warning-outline"></ion-icon>
               </ion-segment-button>
-              <ion-segment-button class="critica" value="critica">
+
+              <ion-segment-button value=critica class="critica">
                 <ion-label>Crítica</ion-label>
                 <ion-icon name="alert-circle-outline"></ion-icon>
               </ion-segment-button>
+
             </ion-segment>
+
           </ion-card-content>
         </ion-card>
       </ion-col>
@@ -61,19 +67,48 @@
       </ion-col>
     </ion-row>
     
-    <ion-row>
-      <ion-col size-md="6" offset-md="3">
-        <ion-button color="primary" expand="block" (click)="getCoords()">
-          <ion-icon name="location-outline" slot="start"></ion-icon>
-          <ion-label>Confirmar Localização</ion-label>
-        </ion-button>
-      </ion-col>
-    </ion-row>
+    <form [formGroup]="form">
+      <ion-row>
+        <ion-col size-md="6" offset-md="3">
+          <ion-item>
+            <ion-input
+            type="text"
+            autocorrect
+            autocapitalize="true"
+            label="Título"
+            labelPlacement="floating"
+            placeholder="Digite o título da postagem"
+            formControlName="title"
+          ></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      
+      <ion-row>
+        <ion-col size-md="6" offset-md="3">
+          <ion-item>
+            <ion-textarea
+            label="Descrição"
+            labelPlacement="floating"
+            fill="outline"
+            placeholder="Descreva sua postagem"
+            rows="3"
+            formControlName="description"
+          ></ion-textarea>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col size-md="6" offset-md="3">
+          <ion-button color="primary" expand="block" type="submit" (click)="onCreateNewPost()" [disabled]="form.invalid">
+            <ion-label>Criar publicação</ion-label>
+          </ion-button>
+
+        </ion-col>
+      </ion-row>
+    </form>
 
   </ion-grid>
 
 </ion-content>
-
-<ng-template #hasImage>
-  
-</ng-template>

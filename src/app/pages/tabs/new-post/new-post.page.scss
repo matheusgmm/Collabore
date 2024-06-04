@@ -18,9 +18,36 @@
     border-radius: 4px;
 }
 
+.close-icon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 2px;
+    cursor: pointer;
+    transition: 0.5s all ease;
+
+    &:hover {
+        color: var(--ion-color-danger);
+    }
+}
+
+.elogio {
+    --color-checked: var(--ion-color-success);
+}
+
+.alerta {
+    --color-checked: var(--ion-color-warning);
+}
+
+.critica {
+    --color-checked: var(--ion-color-danger);
+}
+
 #map {
     height: 400px;
     border: 1px solid var(--ion-color-primary);
     padding: 0;
     width: 100%;
-  }
+}
+
+

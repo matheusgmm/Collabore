@@ -1,17 +1,24 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { Camera, CameraResultType } from '@capacitor/camera';
+import { AfterViewInit, Component } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Geolocation } from '@capacitor/geolocation';
+import { AlertController, LoadingController, SegmentChangeEventDetail } from '@ionic/angular';
 import * as L from 'leaflet';
+import { PhotoService } from 'src/app/shared/services/photo.service';
+import { PostService } from 'src/app/shared/services/post.service';
+
+import { NewPost } from './../../../shared/models/post.model';
 
 @Component({
   selector: 'app-new-post',
   templateUrl: './new-post.page.html',
   styleUrls: ['./new-post.page.scss'],
 })
-export class NewPostPage implements OnInit, AfterViewInit {
+export class NewPostPage implements AfterViewInit {
 
-  imageUrl: string = "";
-  selectedSegment: string = 'elogio';
+  imageUrl: any;
+  selectedCategory: string = 'elogio';
+  uploadedImages: any[] = [];
 
   map!: L.Map;
   customIcon!: L.Icon;  
@@ -19,13 +26,21 @@ export class NewPostPage implements OnInit, AfterViewInit {
   marker!: L.Marker;
   latLng!: L.LatLng;
   icon: string = "../../../../assets/localizador.png"
+  form!: FormGroup;
 
-  constructor() { }
-
-  async ngOnInit() {
-  // 
+  constructor(
+    private formBuilder: FormBuilder,
+    protected photoService: PhotoService,
+    private loadingCtrl: LoadingController,
+    private alertCtrl: AlertController,
+    private postService: PostService,
+    private router: Router
+  ) { 
+    this.form = this.formBuilder.group({
+      title: [null, [Validators.required]],
+      description: [null, [Validators.required]]
+    })
   }
-
 
   async ngAfterViewInit() {
     this.initMap();
@@ -97,8 +112,6 @@ export class NewPostPage implements OnInit, AfterViewInit {
       
       const { lat: mLat, lng: mLng } = this.marker.getLatLng();
 
-      console.log('Nova posição do marcador:', newLatLng);
-
     
       if (distance > this.circle.getRadius()) {
         this.marker.setLatLng([movingState.lastLat, movingState.lastLng]);
@@ -122,22 +135,102 @@ export class NewPostPage implements OnInit, AfterViewInit {
   }
 
 
-  segmentChanged(segment: string) {
-    this.selectedSegment = segment;
+  onSelectCategory(event: CustomEvent<SegmentChangeEventDetail>) {
+    console.log(event.detail);
+    this.selectedCategory = String(event.detail.value);
   }
 
-  takePicture = async () => {
-    const image = await Camera.getPhoto({
-      quality: 100,
-      allowEditing: false,
-      resultType: CameraResultType.Base64,
-    });
 
-    this.imageUrl = "data:image/jpeg;base64,"+image.base64String;
-  };
+  async addPhotoToGallery() {
+    this.photoService.photos.splice(0, this.photoService.photos.length);
+    await this.photoService.addNewToGallery();
+    this.imageUrl = this.photoService.photos[0].webviewPath;
+    for (let image of this.photoService.photos) {
+      this.uploadedImages.push(image);
+    }
+  }
+
+  onCreateNewPost() {
+    if (this.form.invalid) {
+      return;
+    } 
+
+    const formData = new FormData();
+    const processedFiles = new Set<string>();
+
+    if (this.uploadedImages?.[0].data) {
+      if (!processedFiles.has(this.uploadedImages[0].filepath)) {
+        processedFiles.add(this.uploadedImages[0].filepath);
+        const blob = this.dataURItoBlob(this.uploadedImages[0].data);
+        formData.append('image', blob!, this.uploadedImages[0].filepath);
+      }
+    } else {
+      console.error("Erro: A propriedade 'data' na imagem é undefined ou null", this.uploadedImages[0]);
+    }
+
+    formData.append('tags', this.selectedCategory);
+    formData.append('title', this.form.get('title')?.value);
+    formData.append('latitude', String(this.latLng.lat));
+    formData.append('longitude', String(this.latLng.lng));
+    formData.append('text', this.form.get('description')?.value);
 
 
-  getCoords() {
-    console.log("coords: ", this.latLng);
+    this.loadingCtrl.create({
+      message: 'Criando publicação...'
+    })
+      .then(loadingEl => {
+        loadingEl.present();
+        this.postService.newPost(formData as unknown as NewPost).subscribe({
+          next: (res) => {
+            console.log("res: ", res);
+            loadingEl.dismiss();
+            this.form.reset();
+            this.photoService.photos.splice(0, this.photoService.photos.length);
+            this.imageUrl = null;
+            this.router.navigate(['/tabs/home']);
+
+          },
+          error: (err) => {
+            console.error("Erro: ", err);
+            this.alertCtrl.create({
+              header: 'Ocorreu um erro ao criar uma publicação!',
+              message: err.error.message,
+              buttons: ['Ok']
+            })
+              .then(alertEl => {
+                loadingEl.dismiss();
+                alertEl.present();
+              })
+          }
+        })
+      })
+  }
+
+  dataURItoBlob(dataURI: string): Blob | null {
+    if (!dataURI) {
+      console.error('dataURI is undefined or null');
+      return null;
+    }
+
+    const base64Index = dataURI.indexOf('base64,');
+    if (base64Index === -1) {
+      console.error('Invalid dataURI format');
+      return null;
+    }
+
+    const byteString = atob(dataURI.slice(base64Index + 'base64,'.length));
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+
+    return new Blob([ab], { type: 'image/jpeg' });
+  }
+
+  protected removeImage() {
+    this.imageUrl = null;
+    this.photoService.photos.splice(0, this.photoService.photos.length);
   }
 }

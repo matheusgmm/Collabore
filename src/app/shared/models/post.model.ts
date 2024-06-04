@@ -35,3 +35,12 @@ export interface Post {
     pfp: number;
     text: string;
   }
+
+  export interface NewPost {
+    tags: string;
+    title: string;
+    latitude: string | number;
+    longitude: string | number;
+    text: string;
+    image: File | Blob | string;
+  }

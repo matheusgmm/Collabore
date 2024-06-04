@@ -4,7 +4,7 @@ import { Geolocation } from '@capacitor/geolocation';
 import { map, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
-import { Post } from '../models/post.model';
+import { NewPost, Post } from '../models/post.model';
 
 @Injectable({
   providedIn: 'root'
@@ -44,5 +44,9 @@ export class PostService {
 
   public setPostLike(postId: number): Observable<{user_id: number, post_id: number}> {
     return this.http.post<{user_id: number, post_id: number}>(`${this.API}/reaction/${postId}`, null)
+  }
+
+  public newPost(values: NewPost): Observable<NewPost> {
+    return this.http.post<NewPost>(`${this.API}/post`, values);
   }
 }
