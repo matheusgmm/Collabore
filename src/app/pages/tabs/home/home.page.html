@@ -48,7 +48,11 @@
                 </ion-card-title>
               </ion-card-header>
 
+             <ng-container *ngIf="post.image; else empty">
               <ion-img [src]="post.image"></ion-img>
+             </ng-container>
+             
+
               <ion-card-content>
                 <ion-icon (click)="postLike(post.id)" size="small" [color]="post.like ? 'danger' : 'primary'" class="ion-no-margin icon" slot="start" [name]="post.like ? 'heart' : 'heart-outline'"></ion-icon>
                 <ion-icon (click)="openModalComments(post.id)" size="small" class="ion-no-margin icon" slot="start" name="chatbubble-ellipses-outline"></ion-icon>
@@ -83,6 +87,11 @@
       </ion-row>
     </ion-grid>
   </ng-template>
+
+  <ng-template #empty>
+    <ion-img src="../../../../assets/home-image.png"></ion-img>
+  </ng-template>
+  
 
 
 </ion-content>

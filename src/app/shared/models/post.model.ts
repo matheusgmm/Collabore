@@ -36,6 +36,15 @@ export interface Post {
     text: string;
   }
 
+  export interface CommentData extends Comment {
+    user_id: number;
+    post_id: number;
+    comments: {
+      commentsData: Comment[],
+      quantidadeComentarios: number
+    }
+  }
+
   export interface NewPost {
     tags: string;
     title: string;
@@ -43,4 +52,10 @@ export interface Post {
     longitude: string | number;
     text: string;
     image: File | Blob | string;
+  }
+
+  export interface NewComment {
+    user_id: number;
+    post_id: number;
+    text: string;
   }

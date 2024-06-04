@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { AlertController, ModalController } from '@ionic/angular';
 import { BehaviorSubject, lastValueFrom } from 'rxjs';
 import { Post } from 'src/app/shared/models/post.model';
 import { PostService } from 'src/app/shared/services/post.service';
@@ -19,7 +19,8 @@ export class HomePage implements OnInit {
 
   constructor(
     private postService: PostService,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private alertCtrl: AlertController
   ) { }
 
   async ngOnInit() {
@@ -51,19 +52,29 @@ export class HomePage implements OnInit {
   }
 
   async openModalComments(id: number) {
-    await this.modalCtrl.create({
-      component: PostDetailComponent,
-      componentProps: {
-        comments: this.postList$.getValue().find(post => post.id === id)?.comments?.commentsData || []
+    this.postList$.getValue().forEach(async p => {
+      if (p.id === id) {
+        const data = {
+          post_id: p.id,
+          user_id: p.user_id,
+          comments: p.comments
+        }
+        await this.modalCtrl.create({
+          component: PostDetailComponent,
+          componentProps: {
+            data: data
+          }
+        })
+        .then(modalEl => {
+          modalEl.present();
+          return modalEl.onDidDismiss();
+        })
+        .then(data => {
+          console.log('data: ', data.data, data.role);
+        })
       }
     })
-    .then(modalEl => {
-      modalEl.present();
-      return modalEl.onDidDismiss();
-    })
-    .then(data => {
-      console.log('data: ', data.data, data.role);
-    })
+
   }
 
   protected postLike(id: number) {

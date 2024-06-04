@@ -11,15 +11,42 @@
 
 <ion-content [fullscreen]="true" class="ion-padding ion-text-center">
 
-  <ion-item-group *ngFor="let comment of comments;  let i = index">
-    <ion-item-divider >
-      <ion-chip [outline]="true"># {{ i + 1 }}</ion-chip>
-      <ion-label> {{ comment.name }} </ion-label>
-      <ion-label>&nbsp; {{ comment.created_at | date: 'dd/MM/yy HH:mm' }} </ion-label>
-    </ion-item-divider>
-
-    <ion-item lines="none">
-      <ion-label> {{ comment.text }} </ion-label>
-    </ion-item>
-  </ion-item-group>
+  <ng-container *ngIf="data.comments.commentsData.length > 0; else empty">
+    <ion-item-group *ngFor="let comment of data.comments.commentsData;  let i = index">
+      <ion-item-divider >
+        <ion-chip [outline]="true"># {{ i + 1 }}</ion-chip>
+        <ion-label> {{ comment.name }} </ion-label>
+        <ion-label>&nbsp; {{ comment.created_at | date: 'dd/MM/yy HH:mm' }} </ion-label>
+      </ion-item-divider>
+  
+      <ion-item lines="none">
+        <ion-label> {{ comment.text }} </ion-label>
+      </ion-item>
+    </ion-item-group>
+  </ng-container>
+  
 </ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-item>
+      <ion-textarea #comments [(ngModel)]="comment" label="Comentar" labelPlacement="floating" class="comment" fill="outline" placeholder="Digite aqui..." rows="1"></ion-textarea>
+      <ion-icon slot="end" name="send-outline" class="ion-float-end" button (click)="onComment()"></ion-icon>
+    </ion-item>
+    
+  </ion-toolbar>
+</ion-footer>
+
+<ng-template #empty>
+  <ion-grid>
+    <ion-row>
+      <ion-col size-md="6" offset-md="3">
+        <ion-item lines="none">
+          <ion-label>
+          Ainda não há nenhum comentário nesta publicação...
+          </ion-label>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ng-template>  
