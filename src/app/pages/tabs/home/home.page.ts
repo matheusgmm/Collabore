@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, SegmentChangeEventDetail } from '@ionic/angular';
 import { BehaviorSubject, lastValueFrom } from 'rxjs';
 import { Post } from 'src/app/shared/models/post.model';
 import { PostService } from 'src/app/shared/services/post.service';
@@ -16,6 +16,7 @@ export class HomePage implements OnInit {
   public postList$ = new BehaviorSubject<Post[]>([]);
   isLoading: boolean = false;
   limitCard: number = 85;
+  localPosts: boolean = true;
 
   constructor(
     private postService: PostService,
@@ -24,13 +25,34 @@ export class HomePage implements OnInit {
 
   async ngOnInit() {
     this.isLoading = true;
-    await this.getPostList();
+    await this.getLocalPostList();
   }
 
-  async getPostList() {
+  async onSelectPostLocation(event: CustomEvent<SegmentChangeEventDetail>) {
+    console.log(event.detail);
+    this.localPosts = !this.localPosts;
+    this.localPosts ? await this.getLocalPostList() : this.getAllPosts();
+  }
+
+  getAllPosts() {
+    this.postService.getAllPosts().subscribe({
+      next: (res) => {
+        console.log("res: \n", res);
+        this.postList$.next(res);
+      },
+      error: (err) => {
+        console.error("Error fetching posts: \n", err);
+      },
+      complete: () => {
+        this.isLoading = false;
+      }
+    })
+  }
+
+  async getLocalPostList() {
     try {
       await this.postService.getGeolocation();
-      const posts = await lastValueFrom(this.postService.getPosts());
+      const posts = await lastValueFrom(this.postService.getLocalPosts());
       this.postList$.next(posts);
     } catch (error) {
       console.error("Error fetching posts: ", error);
@@ -39,11 +61,10 @@ export class HomePage implements OnInit {
     }
   }
 
-
   handleRefresh(event: { target: { complete: () => void; }; }) {
     this.isLoading = true;
     setTimeout(async () => {
-      await this.getPostList()
+      this.localPosts ? await this.getLocalPostList() : this.getAllPosts();
       event.target.complete();
       this.isLoading = false;
     }, 1000);
@@ -67,8 +88,8 @@ export class HomePage implements OnInit {
           modalEl.present();
           return modalEl.onDidDismiss();
         })
-        .then(data => {
-          this.getPostList();
+        .then(async data => {
+          this.localPosts ? await this.getLocalPostList() : this.getAllPosts();
         })
       }
     })

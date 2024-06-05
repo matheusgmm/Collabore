@@ -37,9 +37,13 @@ export class PostService {
   }
 
 
-  public getPosts(): Observable<Post[]> {
+  public getLocalPosts(): Observable<Post[]> {
     console.log("Fetching posts for city: ", this.userCity);
     return this.http.get<Post[]>(`${this.API}/post/city/${this.userCity}`);
+  }
+
+  public getAllPosts(): Observable<Post[]> {
+    return this.http.get<Post[]>(`${this.API}/post/find`);
   }
 
   public setPostLike(postId: number): Observable<{user_id: number, post_id: number}> {

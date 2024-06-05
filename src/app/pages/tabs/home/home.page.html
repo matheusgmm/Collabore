@@ -20,6 +20,32 @@
 
   <ng-container *ngIf="!isLoading; else loader">
     <ion-grid>
+      <ion-row>
+        <ion-col size-md="6" offset-md=3>
+          <ion-card>
+            <ion-card-header>
+              <ion-card-subtitle>
+                <ion-label>
+                  <h3>Filtrar postagens por localização</h3>
+                </ion-label>
+              </ion-card-subtitle>
+            </ion-card-header>
+
+            <ion-card-content>
+              <ion-segment value="true" (ionChange)="onSelectPostLocation($event)">
+                <ion-segment-button value="true" checked>
+                  <ion-label> Local </ion-label>
+                </ion-segment-button>
+
+                <ion-segment-button value=false>
+                  <ion-label> Todos </ion-label>
+                </ion-segment-button>
+              </ion-segment>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+
       <ion-row *ngFor="let post of postList$ | async">
         <ion-col size-md="6" offset-md="3">
             <ion-card>
