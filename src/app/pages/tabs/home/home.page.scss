@@ -1,6 +1,58 @@
-ion-refresher {
-  background-color: #fff !important;
+.card-header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.5em;
+
+  ion-label h3 {
+    color: var(--ion-color-primary);
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  ion-label p {
+    font-size: 0.8rem;
+  }
+
+  ion-icon {
+    font-size: 1.2rem;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 6px;
+  }
+ 
+  ion-label#date p {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 6px;
+    font-size: 0.8rem;
+  }
 }
+
+
+.card-content {
+  // background-color: lightblue;
+  padding: 1rem 0 0.3rem 1rem;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 6px;
+
+  .options {
+    position: absolute;
+    top: 2;
+    right: 0;
+    padding-right: 6px;
+  }
+}
+
+.likes {
+  margin: 0 0 0.5rem 1rem;
+}
+
 
 .title {
   font-weight: 600;

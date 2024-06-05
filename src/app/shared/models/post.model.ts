@@ -16,6 +16,7 @@ export interface Post {
     comments: Comments;
     reactions: Reactions;
     like: boolean;
+    tags: string;
   }
   
   export interface Comments {

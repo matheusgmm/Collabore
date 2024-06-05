@@ -75,9 +75,16 @@
   
     --ion-font-family: "Urbanist", "sans-serif";
 
+    --ion-background-color: #FFFFFF;
+
     ion-back-button::part(text) {
         display: none;
       }
+
+    ion-refresher ion-refresher-content {
+      --color: #FFFFFF;
+   }
+
 }
 html {
     /* 

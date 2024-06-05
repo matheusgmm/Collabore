@@ -15,8 +15,10 @@ export class HomePage implements OnInit {
 
   public postList$ = new BehaviorSubject<Post[]>([]);
   isLoading: boolean = false;
+  isRefreshing: boolean = false;
   limitCard: number = 85;
   localPosts: boolean = true;
+  collapseState: { [key: number]: boolean } = {};
 
   constructor(
     private postService: PostService,
@@ -29,7 +31,6 @@ export class HomePage implements OnInit {
   }
 
   async onSelectPostLocation(event: CustomEvent<SegmentChangeEventDetail>) {
-    console.log(event.detail);
     this.localPosts = !this.localPosts;
     this.localPosts ? await this.getLocalPostList() : this.getAllPosts();
   }
@@ -37,8 +38,8 @@ export class HomePage implements OnInit {
   getAllPosts() {
     this.postService.getAllPosts().subscribe({
       next: (res) => {
-        console.log("res: \n", res);
         this.postList$.next(res);
+        this.initializeCollapseState(res);
       },
       error: (err) => {
         console.error("Error fetching posts: \n", err);
@@ -53,6 +54,7 @@ export class HomePage implements OnInit {
     try {
       await this.postService.getGeolocation();
       const posts = await lastValueFrom(this.postService.getLocalPosts());
+      this.initializeCollapseState(posts);
       this.postList$.next(posts);
     } catch (error) {
       console.error("Error fetching posts: ", error);
@@ -103,7 +105,11 @@ export class HomePage implements OnInit {
           if (post.id === id) {
             return {
               ...post,
-              like: !post.like
+              like: !post.like,
+              reactions: {
+                ...post.reactions,
+                quantidadeLike: post.like ? post.reactions.quantidadeLike - 1 : post.reactions.quantidadeLike + 1
+              }
             };
           }
           return post;
@@ -117,4 +123,34 @@ export class HomePage implements OnInit {
     });
   }
 
+
+  setIcon(type: string) {
+    if (type === "alerta") {
+      return { name: "warning-outline", color: "warning" };
+    } else if (type === "critica") {
+      return { name: "alert-circle-outline", color: "danger" };
+    } else if (type === "elogio") {
+      return { name: "trophy-outline", color: "success" };
+    } else {
+      return { name: "help-outline", color: "medium" };
+    }
+  }
+
+  collapseDescription(post: Post) {
+    const isCollapsed = this.collapseState[post.id];
+    if (post.text.length > 80 && isCollapsed) {
+      return post.text.slice(0, 80) + "...";
+    }
+    return post.text;
+  }
+
+  toggleCollapse(postId: number) {
+    this.collapseState[postId] = !this.collapseState[postId];
+  }
+
+  initializeCollapseState(posts: Post[]) {
+    posts.forEach(post => {
+      this.collapseState[post.id] = true; 
+    });
+  }
 }

@@ -12,112 +12,78 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" class="ion-padding">
 
-  <ion-refresher color="secondary" slot="fixed" (ionRefresh)="handleRefresh($event)">
-    <ion-refresher-content></ion-refresher-content>
+  <ion-refresher slot="fixed" [pullFactor]="0.5" [pullMin]="100" [pullMax]="200" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content refreshingSpinner="circular"></ion-refresher-content>
   </ion-refresher>
 
   <ng-container *ngIf="!isLoading; else loader">
+    <ion-segment value="local" (ionChange)="onSelectPostLocation($event)">
+      <ion-segment-button value="local" checked>Local</ion-segment-button>
+      <ion-segment-button value="all">Todos</ion-segment-button>
+    </ion-segment>
+
     <ion-grid>
-      <ion-row>
-        <ion-col size-md="6" offset-md=3>
-          <ion-card>
-            <ion-card-header>
-              <ion-card-subtitle>
+      <ion-row *ngFor="let post of postList$ | async" class="ion-margin-vertical">
+        <ion-col size-md="6" offset-md="3">
+          <ion-card class="ion-no-margin">
+            <ion-card-header class="ion-no-padding">
+              <div class="card-header">
+                <ion-avatar slot="start" *ngIf="post.pfp">
+                  <ion-img [src]="post.link_pfp"></ion-img>
+                </ion-avatar>
                 <ion-label>
-                  <h3>Filtrar postagens por localização</h3>
+                  <h3> {{ post.name }} </h3>
+                  <p> {{ post.city }} </p>
                 </ion-label>
-              </ion-card-subtitle>
+                <ion-icon [name]="setIcon(post.tags).name" [color]="setIcon(post.tags).color"></ion-icon> 
+                <ion-label id="date">
+                  <p> {{ post.created_at | date: 'dd/MM/yyyy' }} </p>
+                </ion-label>
+              </div>
             </ion-card-header>
 
-            <ion-card-content>
-              <ion-segment value="true" (ionChange)="onSelectPostLocation($event)">
-                <ion-segment-button value="true" checked>
-                  <ion-label> Local </ion-label>
-                </ion-segment-button>
+            <ng-container *ngIf="post.image; else empty">
+              <ion-img [src]="post.image"></ion-img>
+             </ng-container>
 
-                <ion-segment-button value=false>
-                  <ion-label> Todos </ion-label>
-                </ion-segment-button>
-              </ion-segment>
+            <ion-card-content class="ion-no-padding">
+              <div class="card-content">
+                <ion-icon style="cursor: pointer;" (click)="postLike(post.id)" size="small" [color]="post.like ? 'danger' : 'primary'" class="ion-no-margin icon" slot="start" [name]="post.like ? 'heart' : 'heart-outline'"></ion-icon>
+                <ion-icon style="cursor: pointer;" (click)="openModalComments(post.id)" size="small" class="ion-no-margin icon" slot="start" name="chatbubble-ellipses-outline"></ion-icon>
+                <ion-icon style="cursor: pointer;" size="small" class="options" slot="end" name="ellipsis-vertical-outline"></ion-icon>
+              </div>
+              <span class="likes" *ngIf="post.reactions.quantidadeLike > 0"> {{ post.reactions.quantidadeLike }} {{ post.reactions.quantidadeLike == 1 ? 'curtida' : 'curtidas' }} </span>
+              <div class="card-container">
+                <ion-item lines="none">
+                  <ion-label>
+                    <h3> {{ post.title | titlecase }} </h3>
+                    <p style="cursor: pointer;" (click)="toggleCollapse(post.id)"> {{ collapseDescription(post) }} </p>
+                  </ion-label>
+                </ion-item>
+              </div>
+             
             </ion-card-content>
           </ion-card>
         </ion-col>
       </ion-row>
-
-      <ion-row *ngFor="let post of postList$ | async">
-        <ion-col size-md="6" offset-md="3">
-            <ion-card>
-              <ion-card-header>
-                <ion-card-subtitle class="ion-margin-top">
-                  <ion-label>
-                    <h3 class="title"> {{ post.title | titlecase }} </h3>
-                    <br>
-                    <p class="sub-title"> {{ post.text }} </p>
-                  </ion-label>
-                </ion-card-subtitle>
-                <ion-card-title class="ion-no-padding">
-                  <ion-item lines="full" class="ion-no-padding">
-                    <ion-avatar slot="start" *ngIf="post.pfp">
-                      <ion-img [src]="post.link_pfp"></ion-img>
-                    </ion-avatar>
-  
-                    <ion-label>
-                      <h3> {{ post.name }} </h3>
-                      <p> {{ post.city }} </p>
-                    </ion-label>
-                    <ion-label>
-                      <p> {{ post.created_at | date: 'dd/MM/yyyy' }} </p>
-                    </ion-label>
-                  </ion-item>
-                </ion-card-title>
-              </ion-card-header>
-
-             <ng-container *ngIf="post.image; else empty">
-              <ion-img [src]="post.image"></ion-img>
-             </ng-container>
-             
-
-              <ion-card-content>
-                <ion-icon (click)="postLike(post.id)" size="small" [color]="post.like ? 'danger' : 'primary'" class="ion-no-margin icon" slot="start" [name]="post.like ? 'heart' : 'heart-outline'"></ion-icon>
-                <ion-icon (click)="openModalComments(post.id)" size="small" class="ion-no-margin icon" slot="start" name="chatbubble-ellipses-outline"></ion-icon>
-                <ion-icon size="small" class="ion-no-margin ion-float-end" slot="end" name="ellipsis-vertical-outline"></ion-icon>
-                <ion-title class="ion-text-capitalize ion-no-margin ion-no-padding"> {{ post.title }} </ion-title>
-
-                <ion-item lines="none" class="ion-no-padding">
-                  <ion-label>
-                    <h3>Comentários: {{ post.comments.commentsData.length }} </h3>
-                    <p>
-                      {{
-                        post.comments.commentsData[0]?.text <= limitCard ?
-                        post.comments.commentsData[0]?.text :
-                      (post.comments.commentsData[0]?.text | slice:0:limitCard) + ' ...'
-                      }}
-                    </p>
-                  </ion-label>
-                </ion-item>
-              </ion-card-content>
-            </ion-card>
-        </ion-col>
-      </ion-row>
     </ion-grid>
   </ng-container>
-
+  
   <ng-template #loader>
     <ion-grid>
       <ion-row>
         <ion-col size-md="6" offset-md="3" class="ion-text-center ion-margin-top">
-          <ion-spinner color="secondary"></ion-spinner>
+          <ion-spinner name="circular" color="secondary"></ion-spinner>
         </ion-col>
       </ion-row>
     </ion-grid>
   </ng-template>
 
+
   <ng-template #empty>
     <ion-img src="../../../../assets/home-image.png"></ion-img>
   </ng-template>
-  
-
 
 </ion-content>
