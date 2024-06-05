@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { AlertController, IonTextarea, LoadingController, ModalController } from '@ionic/angular';
 import { CommentData } from 'src/app/shared/models/post.model';
 import { PostService } from 'src/app/shared/services/post.service';
@@ -8,7 +8,7 @@ import { PostService } from 'src/app/shared/services/post.service';
   templateUrl: './post-detail.component.html',
   styleUrls: ['./post-detail.component.scss'],
 })
-export class PostDetailComponent implements OnInit {
+export class PostDetailComponent {
 
 
   @Input() data!: CommentData;
@@ -26,16 +26,12 @@ export class PostDetailComponent implements OnInit {
     this.comments.setFocus();
   }
 
-  ngOnInit(): void {
-      console.log("comments: \n", this.data);
-  }
-
   onCancel() {
-    this.modalCtrl.dismiss(null, 'cancel');
+    this.modalCtrl.dismiss();
   }
 
   onClose() {
-    this.modalCtrl.dismiss({ message: 'Fechando modal' }, 'confirm');
+    this.modalCtrl.dismiss();
   }
 
   onComment(): void {
@@ -52,9 +48,9 @@ export class PostDetailComponent implements OnInit {
         .then(loadingEl => {
           loadingEl.present();
           this.postService.newComment(values).subscribe({
-            next: (res) => {
-              console.log("Comentário publicado: \n", res);
+            next: () => {
               loadingEl.dismiss();
+              this.modalCtrl.dismiss({ newComment: values });
             },
             error: (err) => {
               console.error("Erro ao publicar comentário: \n", err);

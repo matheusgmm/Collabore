@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController, ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 import { BehaviorSubject, lastValueFrom } from 'rxjs';
 import { Post } from 'src/app/shared/models/post.model';
 import { PostService } from 'src/app/shared/services/post.service';
@@ -19,8 +19,7 @@ export class HomePage implements OnInit {
 
   constructor(
     private postService: PostService,
-    private modalCtrl: ModalController,
-    private alertCtrl: AlertController
+    private modalCtrl: ModalController
   ) { }
 
   async ngOnInit() {
@@ -32,7 +31,6 @@ export class HomePage implements OnInit {
     try {
       await this.postService.getGeolocation();
       const posts = await lastValueFrom(this.postService.getPosts());
-      console.log("posts: ", posts);
       this.postList$.next(posts);
     } catch (error) {
       console.error("Error fetching posts: ", error);
@@ -70,7 +68,7 @@ export class HomePage implements OnInit {
           return modalEl.onDidDismiss();
         })
         .then(data => {
-          console.log('data: ', data.data, data.role);
+          this.getPostList();
         })
       }
     })
